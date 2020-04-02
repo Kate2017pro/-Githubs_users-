@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_update"
+        android:title="@string/mymenu_update">
+    </item>
+    <item
+        android:id="@+id/menu_exit"
+        android:title="@string/mymenu_exit">
+    </item>
+    <item
+        android:id="@+id/menu_about"
+        android:title="@string/mymenu_about">
+    </item>
+</menu>

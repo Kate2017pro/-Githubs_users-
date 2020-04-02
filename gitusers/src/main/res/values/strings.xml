@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">GitUsers</string>
+
+    <string name="mymenu_exit">Exit</string>
+    <string name="mymenu_update">Update</string>
+    <string name="mymenu_about">About</string>
+
+    <string name="btn_detail">Подробности</string>
+
+    <string name="author">Автор: СМит Джонсон</string>
+</resources>

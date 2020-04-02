@@ -1,0 +1,2 @@
+include ':app', ':gitusers'
+rootProject.name='My Application3'
