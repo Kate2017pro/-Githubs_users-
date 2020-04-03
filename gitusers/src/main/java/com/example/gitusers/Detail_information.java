@@ -248,6 +248,7 @@ public class Detail_information extends AppCompatActivity {
         // TODO Auto-generated method stub
         switch (item.getItemId()) {
             case R.id.menu_exit:
+                finishAffinity();
                 this.finish();
                 break;
             case R.id.menu_update:

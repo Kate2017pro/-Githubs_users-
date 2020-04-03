@@ -1,36 +1,23 @@
 package com.example.gitusers;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
+
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
-import android.content.Context;
+
 import android.content.Intent;
 
 import android.util.Log;
 
 import android.view.View;
-
 import android.widget.TextView;
 import java.util.List;
-
-import javax.net.ssl.HttpsURLConnection;
-import androidx.appcompat.app.AppCompatActivity;
-import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.RecyclerView;
-import java.util.ArrayList;
-import java.util.List;
 
-import static androidx.core.content.ContextCompat.startActivity;
 
 
 public class DataAdapter extends RecyclerView.Adapter<DataAdapter.DataViewHolder> {
@@ -82,8 +69,47 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.DataViewHolder
         holder.us_id.setText(this.users.get(position).getId());
         holder.log_us.setText(this.users.get(position).getLogin());
         holder.itemView.setTag(this.users.get(position).getLogin());
+
+        setAnimation(holder.itemView, position);
     }
 
+
+
+
+    long DURATION = 300;
+    private boolean on_attach = true;
+
+    private void setAnimation(View itemView, int i) {
+        if(!on_attach){
+            i = -1;
+        }
+        boolean isNotFirstItem = i == -1;
+        i++;
+        itemView.setAlpha(0.f);
+        AnimatorSet animatorSet = new AnimatorSet();
+        ObjectAnimator animator = ObjectAnimator.ofFloat(itemView, "alpha", 0.f, 0.5f, 1.0f);
+        ObjectAnimator.ofFloat(itemView, "alpha", 0.f).start();
+        animator.setStartDelay(isNotFirstItem ? DURATION / 2 : (i * DURATION / 3));
+        animator.setDuration(500);
+        animatorSet.play(animator);
+        animator.start();
+    }
+
+
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+              //  Log.d("myLogs", "onScrollStateChanged: Called " + newState);
+                on_attach = false;
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+        });
+
+        super.onAttachedToRecyclerView(recyclerView);
+    }
 }
 
 

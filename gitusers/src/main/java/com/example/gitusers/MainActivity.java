@@ -3,7 +3,9 @@ package com.example.gitusers;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -36,7 +38,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "myLogs";
 
    // List<String> users1 = new ArrayList<>();
-    RecyclerView recyclerView;
+    private RecyclerView recyclerView;
+    private SwipeRefreshLayout swipe_refr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +49,29 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerView=findViewById(R.id.recycle_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        swipe_refr=findViewById(R.id.swipe_refresh_layout);
 
         new GetListUsers().execute("https://api.github.com/users");
+
+        swipe_refr.setColorSchemeResources(
+                android.R.color.holo_green_light,
+                android.R.color.holo_blue_bright,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light
+        );
+        swipe_refr.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+               // Toast.makeText(this, "refresh started", Toast.LENGTH_SHORT).show();
+                swipe_refr.setRefreshing(true);
+                List<UsersClass> userclasslist = new ArrayList<>();
+                final DataAdapter dataAdapter = new DataAdapter(userclasslist, MainActivity.this);
+                recyclerView.setAdapter(dataAdapter);
+                new GetListUsers().execute("https://api.github.com/users");
+               // swipe_refr.setRefreshing(false);
+            }
+        });
+
 
       /*  handler = new Handler() {
             @Override
@@ -61,6 +85,16 @@ public class MainActivity extends AppCompatActivity {
     class GetListUsers extends AsyncTask<String, Void, Void> {
      //   List<String> users = new ArrayList<>();
         List<UsersClass> userclasslist = new ArrayList<>();
+        ProgressDialog dialog;
+
+        protected void onPreExecute() {
+
+            dialog = new ProgressDialog(MainActivity.this);
+            dialog.setMessage("Загрузка");
+            dialog.setIndeterminate(true);
+            dialog.setCancelable(true);
+            dialog.show();
+        }
 
         protected Void doInBackground(String... urls) {
             String url_adr = urls[0];
@@ -120,14 +154,12 @@ public class MainActivity extends AppCompatActivity {
 
         protected void onPostExecute(Void avoid) {
             super.onPostExecute(avoid);
-
+            dialog.dismiss();
           //  users1 = users;
 
             final DataAdapter dataAdapter = new DataAdapter(userclasslist, MainActivity.this);
             recyclerView.setAdapter(dataAdapter);
-
-
-
+            swipe_refr.setRefreshing(false);
         }
 
         private UsersClass readMessage(JsonReader reader) throws IOException {
@@ -181,7 +213,12 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.menu_update:
                 Toast.makeText(getApplicationContext(), "Данные обновляются", Toast.LENGTH_SHORT).show();
+                swipe_refr.setRefreshing(true);
+                List<UsersClass> userclasslist = new ArrayList<>();
+                final DataAdapter dataAdapter = new DataAdapter(userclasslist, MainActivity.this);
+                recyclerView.setAdapter(dataAdapter);
                 new GetListUsers().execute("https://api.github.com/users");
+                swipe_refr.setRefreshing(false);
                 break;
         }
         //  inf_user.setText(users.get(4));
